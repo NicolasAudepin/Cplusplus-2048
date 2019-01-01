@@ -10,6 +10,7 @@ class Block {
     int x;
     int y;
     int val;
+    
 
     public:
 

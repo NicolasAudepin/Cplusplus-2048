@@ -10,6 +10,8 @@ using namespace std;
 
 Board::Board(){
 
+    change==true;
+
     nbToChar[0]='.';
     nbToChar[2]='A';
     nbToChar[4]='B';
@@ -91,10 +93,10 @@ void Board::move(char direction){
         case 'q':
             cout << "\nLEFT\n";
 
-            rotate(-1);
+            rotate(1);
             fall();
             mergeAll();
-            rotate(1);
+            rotate(-1);
                         
         break;
         case 's':
@@ -107,14 +109,14 @@ void Board::move(char direction){
         break;
         case 'd':
             cout << "\nRIGHT\n";
-            rotate(1);
+            rotate(-1);
             fall();
             mergeAll();
-            rotate(-1);
+            rotate(1);
                         
         break;
     } 
-    showBlocks();
+    //showBlocks();
     //showBoard();
     recountFreeSpace();
     spawnNewRandomBlock();
@@ -123,13 +125,15 @@ void Board::move(char direction){
 void Board::rotate(int nbPiSur2){
     for(size_t i(0);i<blocks.size();i++){
         if(nbPiSur2==1){
+            int x = blocks[i].getX();
             blocks[i].setX(blocks[i].getY());
-            blocks[i].setY(3-blocks[i].getX());
+            blocks[i].setY(3-x);
 
         }
         if(nbPiSur2==-1){
+            int x = blocks[i].getX();
             blocks[i].setX(3-blocks[i].getY());
-            blocks[i].setY(blocks[i].getX());
+            blocks[i].setY(x);
 
         }
         if(nbPiSur2==2){
@@ -147,6 +151,7 @@ struct compareBlock{
 };
 
 void Board::fall(){
+    change=false;
 
     std::sort(blocks.begin(),blocks.end(),compareBlock());
 
@@ -178,6 +183,7 @@ void Board::fall(){
             }
 
             if (falling){
+                change=true;
                 //cout<<"\nFALLING\n";
                 //showBoard();
                 //cout<< blocks.size();
@@ -247,18 +253,22 @@ void Board::recountFreeSpace(){
 }
 
 void Board::spawnNewRandomBlock(){
-    if(freeSpace.empty()){
+    if(freeSpace.empty()&& (change==false)){
         cout<< "GAME OVER";
     }
 
     else{
+        if (change){
 
-        int randomN = rand()%freeSpace.size();
-        int pos = freeSpace[randomN];
-        freeSpace.erase(freeSpace.begin()+randomN);
-        Block b = Block(pos%4, pos/4);
-        blocks.push_back(b);
+            int randomN = rand()%freeSpace.size();
+            int pos = freeSpace[randomN];
+            freeSpace.erase(freeSpace.begin()+randomN);
+            Block b = Block(pos%4, pos/4);
+            blocks.push_back(b);
 
+        }
+
+        
 
     }
 }

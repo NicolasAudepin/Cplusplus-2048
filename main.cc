@@ -12,6 +12,7 @@ int main(void){
     bp= new Board();
     bool running(true);
     (*bp).initialize();
+    (*bp).spawnNewRandomBlock();
     (*bp).showBoard();
 
     while(running){

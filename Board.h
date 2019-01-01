@@ -13,7 +13,7 @@ class Board{
     public:
 
     void showBlocks();
-
+    void spawnNewRandomBlock();
     void showBoard();
     void move(char direction);
     void initialize();
@@ -23,9 +23,9 @@ class Board{
 
     
     private:
+    bool change; 
     void rotate(int nbPiSur2);
     void fall();
-    void spawnNewRandomBlock();
     void mergeAll();
     void recountFreeSpace();
     void mergeBlocs(Block a, Block b);    
