@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <ctime>
 #include "Board.h"
 #include "Block.h"
 
@@ -9,7 +10,7 @@ using namespace std;
 
 Board::Board(){
 
-    nbToChar[0]='0';
+    nbToChar[0]='.';
     nbToChar[2]='A';
     nbToChar[4]='B';
     nbToChar[8]='C';
@@ -25,9 +26,11 @@ Board::Board(){
     blocks.clear();
     
     for(int i = 0;i<16;i++){
-        values[i]='0';
+        values[i]='.';
         freeSpace.push_back(i);
     }
+
+    srand(time(nullptr));
 
     cout<<"Board built\n";
 }
@@ -42,14 +45,16 @@ void Board::initialize(){
     freeSpace.clear();
     
     for(int i = 0;i<16;i++){
-        values[i]='0';
+        values[i]='.';
         freeSpace.push_back(i);
     }
 
 };
 
 void Board::showBoard(){
-
+    for (int d=0;d<16;d++){
+        values[d]='.';
+    }
 
     //regard la liste des blocs et met leurs simboles dans values    
     for (size_t i=0;i<blocks.size();i++){
@@ -76,29 +81,68 @@ void Board::move(char direction){
     switch(direction){
         case 'z':
             cout << "\nUP\n";
+            rotate(2);
+            fall();
+            mergeAll();
+            rotate(2);
+            
                         
         break;
         case 'q':
             cout << "\nLEFT\n";
+
+            rotate(-1);
+            fall();
+            mergeAll();
+            rotate(1);
                         
         break;
         case 's':
             cout << "\nDOWN\n";
 
             fall();
+            mergeAll();
+            
                         
         break;
         case 'd':
             cout << "\nRIGHT\n";
+            rotate(1);
+            fall();
+            mergeAll();
+            rotate(-1);
                         
         break;
     } 
+    showBlocks();
+    //showBoard();
+    recountFreeSpace();
     spawnNewRandomBlock();
+}
+
+void Board::rotate(int nbPiSur2){
+    for(size_t i(0);i<blocks.size();i++){
+        if(nbPiSur2==1){
+            blocks[i].setX(blocks[i].getY());
+            blocks[i].setY(3-blocks[i].getX());
+
+        }
+        if(nbPiSur2==-1){
+            blocks[i].setX(3-blocks[i].getY());
+            blocks[i].setY(blocks[i].getX());
+
+        }
+        if(nbPiSur2==2){
+            blocks[i].setX(3-blocks[i].getX());
+            blocks[i].setY(3-blocks[i].getY());
+
+        }
+    }
 }
 
 struct compareBlock{
     inline bool operator() (Block& b1, Block& b2){
-        return (b1.getY() < b2.getY());
+        return (b1.getY() > b2.getY());
     }
 };
 
@@ -108,18 +152,99 @@ void Board::fall(){
 
     for(unsigned int i(0);i<blocks.size();i++){
         bool falling(true);
+
         while(falling){
             if (blocks[i].getY()==3){
                 falling = false;
             }
-            for 
+            for(unsigned int j(0);j<blocks.size();j++){
+                if(blocks[j].getX()==blocks[i].getX()){
+                    if((blocks[j].getY()==blocks[i].getY()+1)&&(blocks[j].getVal() != blocks[i].getVal())){
+                        falling = false;
+                    }
+
+                }
+            }
+            int fusionBelow=0;
+
+            for (unsigned int j(0);j<blocks.size();j++){
+                if((blocks[j].getY()==blocks[i].getY()+1) && (blocks[j].getX()==blocks[i].getX())){
+                    fusionBelow++;
+                }
+            if (fusionBelow>1){
+                falling=false;
+            }
+
+            }
+
+            if (falling){
+                //cout<<"\nFALLING\n";
+                //showBoard();
+                //cout<< blocks.size();
+                blocks[i].setY(blocks[i].getY()+1);
+                //cout<< blocks.size();
+                
+            }
+
+            //showBoard();
         }
         
+    }
+    
+
+}
+
+void Board::showBlocks(){
+    cout<<"\n";
+    for(size_t j(0);j<blocks.size();j++){
+        cout<<blocks[j].getX()<< blocks[j].getY()<<" ";
+    }
+}
+
+
+void Board::mergeAll(){
+    size_t i(0);
+    while(i<blocks.size()){
+        //cout<<"\nwhile";
+        size_t j(0);
+        while(j<blocks.size()){
+            if(i!=j){
+                if ((blocks[i].getX()==blocks[j].getX())
+                &&(blocks[i].getY()==blocks[j].getY())
+                &&(blocks[i].getVal()==blocks[j].getVal())){
+                    //cout <<"\nSUM";
+                    blocks[i].setVal(blocks[i].getVal()*2);
+                    blocks.erase(blocks.begin()+j);
+                }
+            }
+            
+            j++;
+            
+        }
+        i++;
     }
 
 }
 
+void Board::recountFreeSpace(){
+    freeSpace.clear();
+    for(size_t i(0); i<16;i++){
+        bool occuped(false);
+        for(size_t j(0);j<blocks.size();j++){
+            unsigned int pos;
+            pos = blocks[j].getX()+blocks[j].getY()*4;
+            if(i==pos){
+                occuped = true;
+            }
+            
+        }
+        if (occuped ==false){
+            freeSpace.push_back(i);
+        }
 
+    }
+
+}
 
 void Board::spawnNewRandomBlock(){
     if(freeSpace.empty()){
@@ -128,7 +253,7 @@ void Board::spawnNewRandomBlock(){
 
     else{
 
-        int randomN = 0;
+        int randomN = rand()%freeSpace.size();
         int pos = freeSpace[randomN];
         freeSpace.erase(freeSpace.begin()+randomN);
         Block b = Block(pos%4, pos/4);

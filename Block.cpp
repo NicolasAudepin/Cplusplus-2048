@@ -15,7 +15,7 @@ Block::Block(int _x, int _y){
     x=_x;
     y=_y;
     val=2;
-    cout<<"block created with xy";
+    //cout<<"block created with xy";
     
 }
 
@@ -24,12 +24,12 @@ Block::Block(int _x, int _y, int _val){
     x=_x;
     y=_y;
     val=_val;
-    cout<<"block created with xyVal";
+    //cout<<"block created with xyVal";
     
 }
 
 Block::~Block(){
-    cout << "block destroyed";
+    //cout << "block destroyed";
 }
 
 int Block::getVal(){

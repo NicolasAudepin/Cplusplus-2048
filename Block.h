@@ -20,7 +20,7 @@ class Block {
 
 
     int const getX();
-    int  const getY();
+    int const getY();
     int getVal();
     void setX(int _x);
     void setY(int _y);
