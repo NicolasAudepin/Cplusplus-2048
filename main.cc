@@ -3,10 +3,16 @@
 #include<iostream>
 #include "Block.h"
 #include"Board.h"
+#include "GUI.h"
+#include "HumanGame.h"
 
 using namespace std;
 
 int main(void){
+
+    GUI gui;
+
+    gui.start();
 
     Board *bp;
     bp= new Board();
