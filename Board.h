@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_set>
 #include "Block.h"
+#include <list>
 
 
 
@@ -17,6 +18,7 @@ class Board{
     void showBoard();
     void move(char direction);
     void initialize();
+    std::vector<char> getValues();
 
     Board();
     ~Board();
@@ -27,8 +29,10 @@ class Board{
     void rotate(int nbPiSur2);
     void fall();
     void mergeAll();
+    void updateValues();
     void recountFreeSpace();
-    void mergeBlocs(Block a, Block b);    
+    void mergeBlocs(Block a, Block b);  
+      
     
 
     std::vector<int> freeSpace;

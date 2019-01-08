@@ -53,7 +53,7 @@ void Board::initialize(){
 
 };
 
-void Board::showBoard(){
+void Board::updateValues(){
     for (int d=0;d<16;d++){
         values[d]='.';
     }
@@ -64,6 +64,10 @@ void Board::showBoard(){
         pos = blocks[i].getX()+blocks[i].getY()*4;
         values[pos]=nbToChar[(blocks[i].getVal())];        
     }
+}
+
+void Board::showBoard(){
+    
 
     cout<<"\n";
     cout<< values[0]<<" "<< values[1]<<" "<< values[2]<<" "<< values[3]<<" ";
@@ -116,10 +120,13 @@ void Board::move(char direction){
                         
         break;
     } 
-    //showBlocks();
-    //showBoard();
+
     recountFreeSpace();
     spawnNewRandomBlock();
+    updateValues();
+
+    //showBlocks();
+    //showBoard();
 }
 
 void Board::rotate(int nbPiSur2){
@@ -271,4 +278,14 @@ void Board::spawnNewRandomBlock(){
         
 
     }
+}
+
+vector<char> Board::getValues(){
+    vector<char> valuess;
+    for (size_t i(0);i<16;i++){
+        valuess.push_back(values[i]);
+    }
+    return valuess;
+
+
 }
