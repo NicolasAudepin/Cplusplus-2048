@@ -217,6 +217,7 @@ void Board::showBlocks(){
 
 void Board::mergeAll(){
     size_t i(0);
+    cout<<"\nmergALl";
     while(i<blocks.size()){
         //cout<<"\nwhile";
         size_t j(0);
